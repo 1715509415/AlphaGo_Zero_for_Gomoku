@@ -39,9 +39,9 @@ Origin from https://github.com/junxiaosong/AlphaZero_Gomoku
 請適當的修改 human_play.py，否則就會用預設的 model
 
 要訓練 AI 來產生 model:
-> python train.py
+> python3 train.py 11 11 5 500 1500
 
-上面會產生 (best_policy.model and current_policy.model)：
+上面命令需要花數十小時，中間(及最後)會產生 (best_policy.model and current_policy.model)：
   1) 可以修改 train.py, 裡面有一段被註解掉，它可以讀取 current_policy.model 繼續訓練
   2) 可以修改 train.py, 目前預設的棋盤大小可能不是你要的, 最原始是 6x6x4, 目前是 15x15x5
 
