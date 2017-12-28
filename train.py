@@ -5,6 +5,7 @@
 """ 
 
 from __future__ import print_function
+import os
 import sys
 if (sys.version_info > (3, 0)):
   # Python 3 code in this block
@@ -74,11 +75,13 @@ class TrainPipeline():
         self.pure_mcts_playout_num = 1000  
         print(datetime.datetime.now(), "初始化，需要等候相當長的時間，請泡杯茶吧....{}x{}x{}".format(self.board_width, self.board_height, self.n_in_row))
         # start training from a given policy-value net
-#        policy_param = pickle.load(open('current_policy.model', 'rb')) 
-#        self.policy_value_net = PolicyValueNet(self.board_width, self.board_height, net_params = policy_param)
-        # start training from a new policy-value net
-        print("初始化棋盤")
-        self.policy_value_net = PolicyValueNet(self.board_width, self.board_height) 
+        if os.path.isfile('current_policy.model'):
+          policy_param = pickle.load(open('current_policy.model', 'rb')) 
+          self.policy_value_net = PolicyValueNet(self.board_width, self.board_height, net_params = policy_param)
+        else:
+          # start training from a new policy-value net
+          print("初始化棋盤")
+          self.policy_value_net = PolicyValueNet(self.board_width, self.board_height) 
         print("初始化對戰角色")
         self.mcts_player = MCTSPlayer(self.policy_value_net.policy_value_fn, c_puct=self.c_puct, n_playout=self.n_playout, is_selfplay=1)
 
