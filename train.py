@@ -5,7 +5,6 @@
 """ 
 
 from __future__ import print_function
-import os
 import sys
 if (sys.version_info > (3, 0)):
   # Python 3 code in this block
@@ -75,13 +74,15 @@ class TrainPipeline():
         self.pure_mcts_playout_num = 1000  
         print(datetime.datetime.now(), "初始化，需要等候相當長的時間，請泡杯茶吧....{}x{}x{}".format(self.board_width, self.board_height, self.n_in_row))
         # start training from a given policy-value net
-        if os.path.isfile('current_policy.model'):
-          policy_param = pickle.load(open('current_policy.model', 'rb')) 
+        if os.path.isfile('current_policy_{}_{}_{}.model'.format(self.board_width, self.board_height, self.n_in_row)):
+          print("載入舊AI資料 ", 'current_policy_{}_{}_{}.model'.format(self.board_width, self.board_height, self.n_in_row))
+          policy_param = pickle.load(open('current_policy_{}_{}_{}.model'.format(self.board_width, self.board_height, self.n_in_row), 'rb'))
           self.policy_value_net = PolicyValueNet(self.board_width, self.board_height, net_params = policy_param)
         else:
           # start training from a new policy-value net
           print("初始化棋盤")
-          self.policy_value_net = PolicyValueNet(self.board_width, self.board_height) 
+          self.policy_value_net = PolicyValueNet(self.board_width, self.board_height)
+
         print("初始化對戰角色")
         self.mcts_player = MCTSPlayer(self.policy_value_net.policy_value_fn, c_puct=self.c_puct, n_playout=self.n_playout, is_selfplay=1)
 
@@ -165,11 +166,11 @@ class TrainPipeline():
                     print(datetime.datetime.now(), "current self-play batch: {}".format(i+1))
                     win_ratio = self.policy_evaluate()
                     net_params = self.policy_value_net.get_policy_param() # get model params
-                    pickle.dump(net_params, open('current_policy.model', 'wb'), 4) # save model param to file
+                    pickle.dump(net_params, open('current_policy_{}_{}_{}.model'.format(self.board_width, self.board_height, self.n_in_row), 'wb'), pickle.HIGHEST_PROTOCOL) # save model param to file
                     if win_ratio > self.best_win_ratio: 
                         print(datetime.datetime.now(), "產生新的最佳策略!!!!!!!!")
                         self.best_win_ratio = win_ratio
-                        pickle.dump(net_params, open('best_policy.model', 'wb'), 4) # update the best_policy
+                        pickle.dump(net_params, open('best_policy_{}_{}_{}.model'.format(self.board_width, self.board_height, self.n_in_row), 'wb'), pickle.HIGHEST_PROTOCOL) # update the best_policy
                         if self.best_win_ratio == 1.0 and self.pure_mcts_playout_num < 5000:
                             self.pure_mcts_playout_num += 1000
                             self.best_win_ratio = 0.0
