@@ -20,13 +20,39 @@ from mcts_pure import MCTSPlayer as MCTS_Pure
 from mcts_alphaZero import MCTSPlayer
 import datetime
 
+if 2 <= len(sys.argv):
+  w = int(sys.argv[1])
+else:
+  w = 10
+
+if 3 <= len(sys.argv):
+  h = int(sys.argv[2])
+else:
+  h = w
+
+if 4 <= len(sys.argv):
+  l = int(sys.argv[3])
+else:
+  l = 5
+
+if 5 <= len(sys.argv):
+  p = int(sys.argv[4])
+else:
+  p = 50
+
+if 6 <= len(sys.argv):
+  r = int(sys.argv[5])
+else:
+  r = 1500
+
+print("棋盤 {} x {} x 5, 每 {} 回輸出一次，總共 {} 回".format(w, h, p, r))
 
 class TrainPipeline():
     def __init__(self):
         # params of the board and the game
-        self.board_width = 15
-        self.board_height = 15
-        self.n_in_row = 5
+        self.board_width = w
+        self.board_height = h
+        self.n_in_row = l
         self.board = Board(width=self.board_width, height=self.board_height, n_in_row=self.n_in_row)
         self.game = Game(self.board)
         # training params 
@@ -41,8 +67,8 @@ class TrainPipeline():
         self.play_batch_size = 1 
         self.epochs = 5 # num of train_steps for each update
         self.kl_targ = 0.025
-        self.check_freq = 50 
-        self.game_batch_num = 1500
+        self.check_freq = p
+        self.game_batch_num = r
         self.best_win_ratio = 0.0
         # num of simulations used for the pure mcts, which is used as the opponent to evaluate the trained policy
         self.pure_mcts_playout_num = 1000  
