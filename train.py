@@ -18,6 +18,7 @@ from game import Board, Game
 from policy_value_net import PolicyValueNet
 from mcts_pure import MCTSPlayer as MCTS_Pure
 from mcts_alphaZero import MCTSPlayer
+import datetime
 
 
 class TrainPipeline():
@@ -45,6 +46,7 @@ class TrainPipeline():
         self.best_win_ratio = 0.0
         # num of simulations used for the pure mcts, which is used as the opponent to evaluate the trained policy
         self.pure_mcts_playout_num = 1000  
+        print(datetime.datetime.now(), "初始化，需要等候相當長的時間，請泡杯茶吧....{}x{}x{}".format(self.board_width, self.board_height, self.n_in_row))
         # start training from a given policy-value net
 #        policy_param = pickle.load(open('current_policy.model', 'rb')) 
 #        self.policy_value_net = PolicyValueNet(self.board_width, self.board_height, net_params = policy_param)
@@ -121,21 +123,22 @@ class TrainPipeline():
         return win_ratio
     
     def run(self):
+        print(datetime.datetime.now(), "完畢，接下來開始長時間的訓練，請泡壺茶吧.....每{}回檢查是否有新策略，總共跑{}回".format(self.check_freq, self.game_batch_num))
         """run the training pipeline"""
         try:
             for i in range(self.game_batch_num):                
                 self.collect_selfplay_data(self.play_batch_size)
-                print("batch i:{}, episode_len:{}".format(i+1, self.episode_len))                
+                print(datetime.datetime.now(), "batch i:{}, episode_len:{}".format(i+1, self.episode_len))                
                 if len(self.data_buffer) > self.batch_size:
                     loss, entropy = self.policy_update()                    
                 # check the performance of the current model，and save the model params
                 if (i+1) % self.check_freq == 0:
-                    print("current self-play batch: {}".format(i+1))
+                    print(datetime.datetime.now(), "current self-play batch: {}".format(i+1))
                     win_ratio = self.policy_evaluate()
                     net_params = self.policy_value_net.get_policy_param() # get model params
                     pickle.dump(net_params, open('current_policy.model', 'wb'), pickle.HIGHEST_PROTOCOL) # save model param to file
                     if win_ratio > self.best_win_ratio: 
-                        print("New best policy!!!!!!!!")
+                        print(datetime.datetime.now(), "產生新的最佳策略!!!!!!!!")
                         self.best_win_ratio = win_ratio
                         pickle.dump(net_params, open('best_policy.model', 'wb'), pickle.HIGHEST_PROTOCOL) # update the best_policy
                         if self.best_win_ratio == 1.0 and self.pure_mcts_playout_num < 5000:
@@ -146,8 +149,6 @@ class TrainPipeline():
     
 
 if __name__ == '__main__':
-    print("初始化，需要等候相當長的時間，請泡杯茶吧....")
     training_pipeline = TrainPipeline()
-    print("完畢，接下來開始長時間的訓練，請泡壺茶吧.....")
     training_pipeline.run()    
     

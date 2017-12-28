@@ -16,14 +16,17 @@ Origin from https://github.com/junxiaosong/AlphaZero_Gomoku
 ### 系統需求:
 要使用本專案玩五子棋，系統需要底下套件
 - Python >= 3.0 (通常ubuntu 都內建)
-- Numpy >= 1.11 (sudo pip install numpy)
+- Numpy >= 1.11 (sudo pip3 install numpy)
 
 要訓練 AI model，需要底下兩個套件:
-- Theano == 0.7 (目前僅能使用此版本, sudo pip install theano==0.7.0)
-- Lasagne >= 0.1 (sudo pip install lasagne)
+- Theano == 0.7 (目前僅能使用此版本, sudo pip3 install theano==0.7.0)
+- Lasagne >= 0.1 (sudo pip3 install lasagne)
 
 **PS**:
   1) theano 有新版，但是會出錯，可以參考 [issue](https://github.com/aigamedev/scikit-neuralnetwork/issues/235)
+     也就是說，新版的 theano, 用下面的命令安裝開發版本的 Lasagne:
+     pip3 install --upgrade https://github.com/Lasagne/Lasagne/archive/master.zip
+     pip3 install --upgrade theano
   2) 如果你想要用別種 DL frameworks 來產生 model, 像 TensorFlow or PyTorch, 只需要重寫 policy_value_net.py 即可
 
 ### 開始:
