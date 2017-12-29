@@ -12,6 +12,7 @@ if (sys.version_info > (3, 0)):
 else:
   import cPickle as pickle
 import random
+import os
 import numpy as np
 from collections import defaultdict, deque
 from game import Board, Game
