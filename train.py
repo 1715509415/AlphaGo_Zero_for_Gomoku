@@ -46,7 +46,7 @@ if 6 <= len(sys.argv):
 else:
   r = 1500
 
-print("棋盤 {} x {} x 5, 每 {} 回輸出一次，總共 {} 回".format(w, h, p, r))
+print("board {} x {} x 5, check {} / {}".format(w, h, p, r))
 
 class TrainPipeline():
     def __init__(self):
