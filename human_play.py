@@ -14,6 +14,22 @@ from mcts_pure import MCTSPlayer as MCTS_Pure
 from mcts_alphaZero import MCTSPlayer
 # import cPickle as pickle
 import pickle
+import sys
+
+if 2 <= len(sys.argv):
+  w = int(sys.argv[1])
+else:
+  w = 8
+
+if 3 <= len(sys.argv):
+  h = int(sys.argv[2])
+else:
+  h = w
+
+if 4 <= len(sys.argv):
+  l = int(sys.argv[3])
+else:
+  l = 5
 
 class Human(object):
     """
@@ -45,8 +61,9 @@ class Human(object):
 
 def run():
     n = 5
-    width, height = 8, 8
-    model_file = 'best_policy_8_8_5.model'
+    width = w
+    height = h
+    model_file = 'best_policy_{}_{}_{}.model'.format(width, height, l)
     try:
         board = Board(width=width, height=height, n_in_row=n)
         game = Game(board)      
@@ -63,7 +80,7 @@ def run():
         except:
             policy_param = pickle.load(open(model_file, 'rb'), encoding = 'bytes')  # To support python3
         best_policy = PolicyValueNetNumpy(width, height, policy_param)
-        mcts_player = MCTSPlayer(best_policy.policy_value_fn, c_puct=5, n_playout=400)  # set larger n_playout for better performance
+        mcts_player = MCTSPlayer(best_policy.policy_value_fn, c_puct=l, n_playout=400)  # set larger n_playout for better performance
         
         # uncomment the following line to play with pure MCTS (its much weaker even with a larger n_playout)
 #        mcts_player = MCTS_Pure(c_puct=5, n_playout=1000)
