@@ -48,7 +48,7 @@ if 6 <= len(sys.argv):
 else:
   r = 1500
 
-print("board {} x {} x 5, check {} / {}".format(w, h, p, r))
+print("board {} x {} x {}, check {} / {}".format(w, h, l, p, r))
 
 class TrainPipeline():
     def __init__(self):
