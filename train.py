@@ -20,6 +20,8 @@ from policy_value_net import PolicyValueNet
 from mcts_pure import MCTSPlayer as MCTS_Pure
 from mcts_alphaZero import MCTSPlayer
 import datetime
+import pytz
+a=pytz.timezone('Asia/Taipei')
 
 if 2 <= len(sys.argv):
   w = int(sys.argv[1])
@@ -73,7 +75,7 @@ class TrainPipeline():
         self.best_win_ratio = 0.0
         # num of simulations used for the pure mcts, which is used as the opponent to evaluate the trained policy
         self.pure_mcts_playout_num = 1000  
-        print(datetime.datetime.now(), "init....{}x{}x{}".format(self.board_width, self.board_height, self.n_in_row))
+        print(datetime.datetime.now(a), "init....{}x{}x{}".format(self.board_width, self.board_height, self.n_in_row))
         # start training from a given policy-value net
         if os.path.isfile('current_policy_{}_{}_{}.model'.format(self.board_width, self.board_height, self.n_in_row)):
           print("load old AI model ", 'current_policy_{}_{}_{}.model'.format(self.board_width, self.board_height, self.n_in_row))
@@ -153,22 +155,22 @@ class TrainPipeline():
         return win_ratio
     
     def run(self):
-        print(datetime.datetime.now(), "check {} / {}".format(self.check_freq, self.game_batch_num))
+        print(datetime.datetime.now(a), "check {} / {}".format(self.check_freq, self.game_batch_num))
         """run the training pipeline"""
         try:
             for i in range(self.game_batch_num):                
                 self.collect_selfplay_data(self.play_batch_size)
-                print(datetime.datetime.now(), "batch i:{}, episode_len:{}".format(i+1, self.episode_len))                
+                print(datetime.datetime.now(a), "batch i:{}, episode_len:{}".format(i+1, self.episode_len))                
                 if len(self.data_buffer) > self.batch_size:
                     loss, entropy = self.policy_update()                    
                 # check the performance of the current model，and save the model params
                 if (i+1) % self.check_freq == 0:
-                    print(datetime.datetime.now(), "current self-play batch: {}".format(i+1))
+                    print(datetime.datetime.now(a), "current self-play batch: {}".format(i+1))
                     win_ratio = self.policy_evaluate()
                     net_params = self.policy_value_net.get_policy_param() # get model params
                     # pickle.dump(net_params, open('current_policy_{}_{}_{}.model'.format(self.board_width, self.board_height, self.n_in_row), 'wb'), -1) # save model param to file
                     if win_ratio > self.best_win_ratio: 
-                        print(datetime.datetime.now(), "generate best_policy_{}_{}_{}.model".format(self.board_width, self.board_height, self.n_in_row))
+                        print(datetime.datetime.now(a), "generate best_policy_{}_{}_{}.model".format(self.board_width, self.board_height, self.n_in_row))
                         self.best_win_ratio = win_ratio
                         pickle.dump(net_params, open('best_policy_{}_{}_{}.model'.format(self.board_width, self.board_height, self.n_in_row), 'wb'), -1) # update the best_policy
                         if self.best_win_ratio == 1.0 and self.pure_mcts_playout_num < 5000:
